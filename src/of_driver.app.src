@@ -28,5 +28,6 @@
                   lager
                  ]},
   {env, []},
-  {mod, {of_driver_app, []}}
+  {mod, {of_driver_app, []}},
+  {registered, []}
  ]}.
