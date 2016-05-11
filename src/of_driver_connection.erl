@@ -406,6 +406,7 @@ handle_message(#ofp_message{xid = XID, type = echo_request} = Msg,
     {ok, EchoReply} = of_protocol:encode(
                             of_msg_lib:echo_reply(Version, XID, Data)),
     ok = of_driver_utils:send(Proto, Socket, EchoReply),
+    switch_handler_next_state(Msg, State),
     State;
 handle_message(#ofp_message{xid = XID} = Msg, State) ->
     update_response(XID, Msg, State).
