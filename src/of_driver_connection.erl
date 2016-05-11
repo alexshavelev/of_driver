@@ -347,6 +347,7 @@ handle_message(#ofp_message{version = Version,
         	AuxID = proplists:get_value(auxiliary_id, MsgRes),
             State#?STATE{aux_id = AuxID, datapath_mac = DatapathMac}
     end,    
+    NewState = 
     case handle_datapath(NewState1) of 
         Error1 = {stop, _, _} ->
             Error1;
@@ -374,7 +375,9 @@ handle_message(#ofp_message{version = Version,
                 NewState4 ->
                     NewState4#?STATE{connection_init = true}
             end
-    end;
+    end,
+    switch_handler_next_state(Msg, NewState),
+    NewState;
 handle_message(#ofp_message{} = Msg, #?STATE{connection_init = false} = State) ->
     ?WARNING("Features handshake in progress, dropping message: ~p~n",[Msg]),
     State;
