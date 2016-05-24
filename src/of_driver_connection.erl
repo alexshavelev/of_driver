@@ -392,7 +392,7 @@ handle_message(#ofp_message{xid = XID, type = barrier_reply} = Msg,
             NewPSM = delete_pending_results(XIDStatus, PSM),
             gen_server:reply(From, SyncResults),
             State#?STATE{pending_msgs = NewPSM};
-        false ->
+        none ->
             % these aren't the droids you're looking for...
             switch_handler_next_state(Msg, State)
     end;
