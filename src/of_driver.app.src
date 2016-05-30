@@ -20,6 +20,7 @@
 {application, of_driver,
  [{description, "OF-Driver Library for Erlang"},
   {vsn, "0.1"},
+  {registered, []},
   {applications, [kernel,
                   stdlib,
                   mnesia,
