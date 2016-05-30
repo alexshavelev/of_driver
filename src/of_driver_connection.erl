@@ -331,7 +331,7 @@ handle_message(#ofp_message{version = Version,
                             #?STATE{connection_init     = false,
                                     switch_handler      = SwitchHandler,
                                     switch_handler_opts = Opts,
-                                    address             = IpAddr} = State) ->
+                                    socket = Socket} = State) ->
     % process feature reply from our initial handshake
     NewState1 = case Version of
         3 ->
@@ -355,7 +355,7 @@ handle_message(#ofp_message{version = Version,
             R = case NewState2#?STATE.aux_id of
                 0 ->
                     do_callback(SwitchHandler, init,
-                                        [IpAddr, NewState1#?STATE.datapath_mac,
+                                        [Socket, NewState1#?STATE.datapath_mac,
                                          Features, Version, self(), Opts],
                                         NewState2);
                 _ ->
@@ -364,7 +364,7 @@ handle_message(#ofp_message{version = Version,
                     MonitorRef = erlang:monitor(process, MainPid),
                     NewState3 = NewState2#?STATE{main_monitor = MonitorRef},
                     do_callback(SwitchHandler, handle_connect,
-                                        [IpAddr, NewState3#?STATE.datapath_mac,
+                                        [Socket, NewState3#?STATE.datapath_mac,
                                          Features, Version, self(),
                                          NewState2#?STATE.aux_id, Opts],
                                         NewState3)
