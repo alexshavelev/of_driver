@@ -306,7 +306,7 @@ do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
                     {stop, Reason, NewState}
             end;
         {error,_Exception} ->
-        lager:warning("here we areeee: data ~p State ~p parser: ~p version: ~p~n", [Data, State, Parser, Version]),
+        lager:warning("ofp_parser parsing tcp Data failed. here we areeee: data ~p State ~p parser: ~p version: ~p~n", [Data, State, Parser, Version]),
             ?WARNING("ofp_parser parsing tcp Data failed.\n",[]),
             {ok, EmptyParser} = ofp_parser:new(Version),
             {noreply, State#?STATE{
