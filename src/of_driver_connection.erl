@@ -294,7 +294,7 @@ do_handle_tcp(#?STATE{parser        = undefined,
                                       State)
     end;
 do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
-	lager:info("here we areeee: data ~p State ~p parser: ~p version: ~p~n, [Data, State, Parser, Version]),
+	lager:info("here we areeee: data ~p State ~p parser: ~p version: ~p~n", [Data, State, Parser, Version]),
     case ofp_parser:parse(Parser, Data) of
         {ok, NewParser, Messages} ->
             case handle_messages(Messages, State) of
