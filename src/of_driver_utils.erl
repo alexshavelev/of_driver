@@ -21,6 +21,7 @@
 -copyright("2013, Erlang Solutions Ltd.").
 
 -include_lib("of_protocol/include/of_protocol.hrl").
+-include_lib("of_driver/include/of_driver_logger.hrl").
 
 -export([connection_info/1
         ]).
@@ -97,8 +98,15 @@ setopts(tcp, Socket, Opts) ->
 setopts(tls, Socket, Opts) ->
     ssl:setopts(Socket, Opts).
 
+timestamp() ->
+  {MegaSecs, Secs, _} = erlang:timestamp(),
+  MegaSecs * 1000000 + Secs.
+
 send(tcp, Socket, Data) ->
-    gen_tcp:send(Socket, Data);
+    Start = timestamp(),
+    gen_tcp:send(Socket, Data),
+    End = timestamp(),
+    ?INFO("TCP send ~p~n", [End - Start]);
 send(tls, Socket, Data) ->
     ssl:send(Socket, Data).
 
