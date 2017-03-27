@@ -177,11 +177,11 @@ handle_info({tcp_error, _Socket, _Reason},State) ->
 
 terminate(Reason, #?STATE{socket = undefined}) ->
     % terminating after connection is closed
-    ?INFO("[~p] terminating: ~p~n", [?MODULE, Reason]),
+    ?ERROR("[~p] terminating: ~p~n", [?MODULE, Reason]),
     ok;
 terminate(Reason, State) ->
     % terminate and close connection
-    ?INFO("[~p] terminating (crash): ~p~n", [?MODULE, Reason]),
+    ?ERROR("[~p] terminating (crash): ~p~n", [?MODULE, Reason]),
     close_of_connection(State, gen_server_terminate),
     ok.
 
@@ -289,7 +289,7 @@ do_handle_tcp(#?STATE{parser        = undefined,
                                                version = Version}, Leftovers)
             end;
         {ok, #ofp_message{xid = _XID, body = _Body} = Msg, Leftovers} ->
-            ?WARNING("Hello handshake in progress, dropping message: ~p~n",[Msg]),
+            ?ERROR("Hello handshake in progress, dropping message: ~p~n",[Msg]),
             do_handle_tcp(State, Leftovers);
         {error, binary_too_small} ->
             {noreply, State#?STATE{hello_buffer = <<Buffer/binary,
@@ -312,7 +312,7 @@ do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
             end;
         {error,_Exception} ->
         lager:warning("ofp_parser parsing tcp Data failed. here we areeee: data ~p State ~p parser: ~p version: ~p~n", [Data, State, Parser, Version]),
-            ?WARNING("ofp_parser parsing tcp Data failed.\n",[]),
+            ?ERROR("ofp_parser parsing tcp Data failed.\n",[]),
             {ok, EmptyParser} = ofp_parser:new(Version),
             {noreply, State#?STATE{
                                   parser = EmptyParser,
@@ -386,7 +386,7 @@ handle_message(#ofp_message{version = Version,
     switch_handler_next_state(Msg, NewState),
     NewState;
 handle_message(#ofp_message{} = Msg, #?STATE{connection_init = false} = State) ->
-    ?WARNING("Features handshake in progress, dropping message: ~p~n",[Msg]),
+    ?ERROR("Features handshake in progress, dropping message: ~p~n",[Msg]),
     State;
 handle_message(#ofp_message{xid = XID, type = barrier_reply} = Msg,
                                     #?STATE{pending_msgs = PSM} = State) ->
@@ -428,7 +428,7 @@ update_response(XID, Msg, State = #?STATE{pending_msgs = PSM}) ->
         {value, Val} -> % XXX more than one non matching response - report an error
             case of_driver_message:append_body(Val, Msg) of
                 false ->
-                    ?WARNING("duplicate response message: ~p\n",[Msg]),
+                    ?ERROR("duplicate response message: ~p\n",[Msg]),
                     State;
                 NewMsg ->
                     State#?STATE{pending_msgs = gb_trees:enter(XID, NewMsg, PSM)}
@@ -477,7 +477,7 @@ close_of_connection(#?STATE{socket = Socket} = State, failed_version_negotiation
     %% When the switch and the controller fail at negotiating the OF version
     %% to use, there is no need to call the handler's terminate/2 callback
     %% function since the handler's init/6 has not been called either.
-    ?WARNING("connection terminated: version negotiation failed"),
+    ?ERROR("connection terminated: version negotiation failed"),
     ok = terminate_connection(Socket),
     {stop, normal, State#?STATE{socket = undefined}};
 close_of_connection(#?STATE{socket        = Socket,
@@ -485,7 +485,7 @@ close_of_connection(#?STATE{socket        = Socket,
                             aux_id        = AuxID,
                             switch_handler= SwitchHandler,
                             handler_state = HandlerState} = State, Reason) ->
-    ?WARNING("connection terminated: datapath_mac(~p) aux_id(~p) reason(~p)~n",
+    ?ERROR("connection terminated: datapath_mac(~p) aux_id(~p) reason(~p)~n",
                                                 [DatapathMac, AuxID, Reason]),
     of_driver_db:delete_connection(DatapathMac, AuxID),   
     ok = terminate_connection(Socket),
