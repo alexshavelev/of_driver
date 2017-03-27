@@ -23,7 +23,7 @@
 -behaviour(gen_server).
 
 -export([idle_check/1,
-         ping_timeout/1]).
+         ping_timeout/1, do_handle_tcp/2]).
 
 -export([start_link/1,
          init/1,
@@ -162,7 +162,9 @@ handle_info({'DOWN', MonitorRef, process, _MainPid, Reason},
     close_of_connection(State, {main_closed, Reason});
 handle_info({tcp, Socket, Data},#?STATE{ protocol = Protocol, socket = Socket } = State) ->
     of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
-    do_handle_tcp(State, Data);
+    spawn(?MODULE, do_handle_tcp, [State, Data]),
+    {noreply, State#?STATE{last_receive = now()}};
+%%    do_handle_tcp(State, Data);
 handle_info({tcp_closed,_Socket},State) ->
     close_of_connection(State,tcp_closed);
 handle_info({tcp_error, _Socket, _Reason},State) ->
