@@ -164,7 +164,7 @@ handle_info({'DOWN', MonitorRef, process, _MainPid, Reason},
 %     of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
 %     do_handle_tcp(State, Data);
 handle_info({tcp, Socket, Data},#?STATE{ protocol = Protocol, socket = Socket } = State) ->
-    of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
+    of_driver_utils:setopts(Protocol,Socket,[{active, true}]),
     Response =
     do_handle_tcp(State, Data),
     ?INFO("old state ~p new state ~p~n", [State, Response]),
