@@ -405,6 +405,7 @@ handle_message(#ofp_message{xid = XID, type = barrier_reply} = Msg,
     end;
 handle_message(#ofp_message{xid = XID, type = echo_reply},
                                         #?STATE{ping_xid = XID} = State) ->
+	?INFO("echo reply: ~p~n", [timestamp()])	,
     receive_ping(State);
 handle_message(#ofp_message{xid = XID, type = echo_request} = Msg,
                         State = #?STATE{version = Version,
@@ -417,6 +418,7 @@ handle_message(#ofp_message{xid = XID, type = echo_request} = Msg,
                             of_msg_lib:echo_reply(Version, XID, Data)),
     ok = of_driver_utils:send(Proto, Socket, EchoReply),
     switch_handler_next_state(Msg, State),
+	?INFO("echo request: ~p~n", [timestamp()])	,
     State;
 handle_message(#ofp_message{xid = XID} = Msg, State) ->
     update_response(XID, Msg, State).
@@ -594,3 +596,7 @@ maybe_idle_check(true, IdlePollInt) ->
     ITRef;
 maybe_idle_check(_, _IdlePollInt) ->
     undefined.
+
+timestamp() ->
+  {MegaSecs, Secs, _} = erlang:timestamp(),
+  MegaSecs * 1000000 + Secs.
