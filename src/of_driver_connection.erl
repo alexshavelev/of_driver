@@ -318,7 +318,7 @@ do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
               true ->
                 spawn(?MODULE, handle_messages, [Messages, State]),
                 ?INFO("of_driver spawned 2 ~n", []),
-                {noreply, State#?STATE{last_receive = now(), parser = NewParser}};;
+                {noreply, State#?STATE{last_receive = now(), parser = NewParser}};
               false ->
                 ?INFO("Len ~p Messages of_driver: ~p~n", [length(Messages), Messages]),
                 case handle_messages(Messages, State) of
