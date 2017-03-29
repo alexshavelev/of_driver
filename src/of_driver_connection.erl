@@ -304,6 +304,7 @@ do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
     case ofp_parser:parse(Parser, Data) of
         {ok, NewParser, Messages} ->
             case handle_messages(Messages, State) of
+		    ?INFO("Messages of_driver: ~p~n", [Messages]),
                 {ok, NewState} ->
                     {noreply, NewState#?STATE{
                                         parser = NewParser,
