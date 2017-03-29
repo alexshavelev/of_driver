@@ -23,7 +23,7 @@
 -behaviour(gen_server).
 
 -export([idle_check/1,
-         ping_timeout/1, do_handle_tcp/2]).
+         ping_timeout/1, do_handle_tcp/2, handle_messages/2]).
 
 -export([start_link/1,
          init/1,
