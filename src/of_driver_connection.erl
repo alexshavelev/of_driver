@@ -300,25 +300,39 @@ do_handle_tcp(#?STATE{parser        = undefined,
                                       State)
     end;
 do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
+
+  F = fun(#ofp_message{type = MessageType}) ->
+        case MessageType of
+          packet_in -> true;
+          _ -> false
+        end
+      end,
 	
     case ofp_parser:parse(Parser, Data) of
-	{ok, NewParser, [#ofp_message{type = packet_in}] = Messages} ->
-         	 spawn(?MODULE, handle_messages, [Messages, State]),
-		    ?INFO("of_driver spawned~n", []),
-          	{noreply, State#?STATE{last_receive = now(), parser = NewParser}};
+        {ok, NewParser, [#ofp_message{type = packet_in}] = Messages} ->
+          spawn(?MODULE, handle_messages, [Messages, State]),
+          ?INFO("of_driver spawned 1 ~n", []),
+          {noreply, State#?STATE{last_receive = now(), parser = NewParser}};
         {ok, NewParser, Messages} ->
-		    ?INFO("Messages of_driver: ~p~n", [Messages]),
-            case handle_messages(Messages, State) of		 
-                {ok, NewState} ->
+            case lists:all(F, Messages) of
+              true ->
+                spawn(?MODULE, handle_messages, [Messages, State]),
+                ?INFO("of_driver spawned 2 ~n", []),
+                {noreply, State#?STATE{last_receive = now(), parser = NewParser}};;
+              false ->
+                ?INFO("Len ~p Messages of_driver: ~p~n", [length(Messages), Messages]),
+                case handle_messages(Messages, State) of
+                  {ok, NewState} ->
                     {noreply, NewState#?STATE{
-                                        parser = NewParser,
-                                        last_receive = now()}};
-                {stop, Reason, NewState} ->
+                      parser = NewParser,
+                      last_receive = now()}};
+                  {stop, Reason, NewState} ->
                     {stop, Reason, NewState}
+                end
             end;
         {error,_Exception} ->
         lager:warning("ofp_parser parsing tcp Data failed. here we areeee: data ~p State ~p parser: ~p version: ~p~n", [Data, State, Parser, Version]),
-            ?ERROR("ofp_parser parsing tcp Data failed.\n",[]),
+            ?WARNING("ofp_parser parsing tcp Data failed.\n",[]),
             {ok, EmptyParser} = ofp_parser:new(Version),
             {noreply, State#?STATE{
                                   parser = EmptyParser,
