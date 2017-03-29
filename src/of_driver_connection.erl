@@ -165,9 +165,10 @@ handle_info({'DOWN', MonitorRef, process, _MainPid, Reason},
 %     do_handle_tcp(State, Data);
 handle_info({tcp, Socket, Data},#?STATE{ protocol = Protocol, socket = Socket } = State) ->
     of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
-%     spawn(?MODULE, do_handle_tcp, [State, Data]),
-%     {noreply, State#?STATE{last_receive = now()}};
-    do_handle_tcp(State, Data);
+    Response =
+    do_handle_tcp(State, Data),
+    ?INFO("old state ~p new state ~p~n", [State, Response]),
+    Response;
 handle_info({tcp_closed,_Socket},State) ->
     close_of_connection(State,tcp_closed);
 handle_info({tcp_error, _Socket, _Reason},State) ->
@@ -471,6 +472,7 @@ handle_datapath(#?STATE{ datapath_mac = DatapathMac,
 switch_handler_next_state(Msg, #?STATE{ switch_handler = SwitchHandler,
                                         handler_state  = HandlerState } = State) ->
     {ok, NewHandlerState} = SwitchHandler:handle_message(Msg, HandlerState),
+	?INFO("SwitchHandler: ~p old handler state: ~p new handler state: ~p~n", [SwitchHandler, HandlerState, NewHandlerState]),
     State#?STATE{handler_state = NewHandlerState}.
 
 %%-----------------------------------------------------------------------------
