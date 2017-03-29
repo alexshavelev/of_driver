@@ -167,7 +167,7 @@ handle_info({tcp, Socket, Data},#?STATE{ protocol = Protocol, socket = Socket } 
     of_driver_utils:setopts(Protocol,Socket,[{active, true}]),
     Response =
     do_handle_tcp(State, Data),
-    ?INFO("old state ~p new state ~p~n", [State, Response]),
+    ?INFO("getopts: ~p old state ~p new state ~p~n", [inet:getopts(Socket, [recbuf, buffer]), State, Response]),
     Response;
 handle_info({tcp_closed,_Socket},State) ->
     close_of_connection(State,tcp_closed);
