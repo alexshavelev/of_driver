@@ -302,6 +302,9 @@ do_handle_tcp(#?STATE{parser        = undefined,
 do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
 	
     case ofp_parser:parse(Parser, Data) of
+	{ok, NewParser, [#ofp_message{type = packet_in}] = Messages} ->
+         	 spawn(?MODULE, handle_messages, [Messages, State]),
+          	{noreply, State#?STATE{last_receive = now(), parser = NewParser}};
         {ok, NewParser, Messages} ->
 		    ?INFO("Messages of_driver: ~p~n", [Messages]),
             case handle_messages(Messages, State) of		 
