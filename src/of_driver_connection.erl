@@ -86,7 +86,7 @@ start_link(Socket) ->
 
 init([Socket]) ->
     Protocol = tcp,
-    of_driver_utils:setopts(Protocol, Socket, [{active, once}, {buffer, 65536}]),
+    of_driver_utils:setopts(Protocol, Socket, [{active, once}, {buffer, 65536}, {nodelay, true}]),
     {ok, {Address, Port}} = inet:peername(Socket),
     SwitchHandler = of_driver_utils:conf_default(callback_module, fun erlang:is_atom/1, of_driver_default_handler),
     PingEnable = of_driver_utils:conf_default(enable_ping, fun erlang:is_atom/1, false),
@@ -167,7 +167,7 @@ handle_info({tcp, Socket, Data},#?STATE{ protocol = Protocol, socket = Socket } 
     of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
     Response =
     do_handle_tcp(State, Data),
-    ?INFO("getopts: ~p old state ~p new state ~p~n", [inet:getopts(Socket, [recbuf, buffer]), State, Response]),
+    ?INFO("getopts: ~p old state ~p new state ~p~n", [inet:getopts(Socket, [recbuf, buffer, nodelay]), State, Response]),
     Response;
 handle_info({tcp_closed,_Socket},State) ->
     close_of_connection(State,tcp_closed);
