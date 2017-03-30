@@ -307,6 +307,7 @@ do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
           ?INFO("of_driver spawned 1 ~n", []),
           {noreply, State#?STATE{last_receive = now(), parser = NewParser}};
         {ok, NewParser, MessagesPre} ->
+          ?INFO("of_driver spawned before len ~p~n", [length(MessagesPre)]),
           Messages =
             lists:filter(fun(#ofp_message{type = MessageType} = Message) ->
                             case MessageType of
