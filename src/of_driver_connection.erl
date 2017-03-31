@@ -87,7 +87,7 @@ start_link(Socket) ->
 
 init([Socket]) ->
     Protocol = tcp,
-    of_driver_utils:setopts(Protocol, Socket, [{active, once}, {nodelay, true}, {buffer, 2000}]), %% , {buffer, 65536}
+    of_driver_utils:setopts(Protocol, Socket, [{active, once}, {nodelay, true}, {buffer, 10000}]), %% , {buffer, 65536}
     {ok, {Address, Port}} = inet:peername(Socket),
     SwitchHandler = of_driver_utils:conf_default(callback_module, fun erlang:is_atom/1, of_driver_default_handler),
     PingEnable = of_driver_utils:conf_default(enable_ping, fun erlang:is_atom/1, false),
@@ -303,11 +303,11 @@ do_handle_tcp(#?STATE{parser        = undefined,
 do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
 
     case ofp_parser:parse(Parser, Data) of
-%%        {ok, NewParser, [#ofp_message{type = packet_in, body = #ofp_packet_in{data = Payload}}] = Messages} ->
-%%          spawn(?MODULE, handle_messages, [Messages, State]),
-%%          ByteSize = byte_size(Payload),
-%%          ?INFO("of_driver spawned 1 size: ~p~n", [ByteSize]),
-%%          {noreply, State#?STATE{last_receive = now(), parser = NewParser}};
+        {ok, NewParser, [#ofp_message{type = packet_in, body = #ofp_packet_in{data = Payload}}] = Messages} ->
+          spawn(?MODULE, handle_messages, [Messages, State]),
+          ByteSize = byte_size(Payload),
+          ?INFO("of_driver spawned 1 size: ~p~n", [ByteSize]),
+          {noreply, State#?STATE{last_receive = now(), parser = NewParser}};
         {ok, NewParser, MessagesPre} ->
           ?INFO("of_driver spawned before len ~p size ~p~n", [length(MessagesPre), byte_size(Data)]),
           Messages =
