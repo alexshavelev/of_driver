@@ -104,7 +104,7 @@ timestamp() ->
 
 send(tcp, Socket, Data) ->
     Start = timestamp(),
-    gen_tcp:send(Socket, Data),
+    ok = gen_tcp:send(Socket, Data),
     End = timestamp(),
     ?INFO("TCP send ~p~n", [End - Start]);
 send(tls, Socket, Data) ->
