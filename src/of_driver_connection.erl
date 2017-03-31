@@ -87,7 +87,7 @@ start_link(Socket) ->
 
 init([Socket]) ->
     Protocol = tcp,
-    of_driver_utils:setopts(Protocol, Socket, [{active, once}, {nodelay, true}, {buffer, 2000}]), %% , {buffer, 65536}
+    of_driver_utils:setopts(Protocol, Socket, [{active, once}, {nodelay, true}, {buffer, 1600}]), %% , {buffer, 65536}
     {ok, {Address, Port}} = inet:peername(Socket),
     SwitchHandler = of_driver_utils:conf_default(callback_module, fun erlang:is_atom/1, of_driver_default_handler),
     PingEnable = of_driver_utils:conf_default(enable_ping, fun erlang:is_atom/1, false),
@@ -317,7 +317,7 @@ do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
 
                                   #ofp_packet_in{data = Payload} = Body,
                                     ByteSize = byte_size(Payload),
-                                    case ByteSize > 180 of
+                                    case ByteSize > 1600 of
                                       true ->
                                         ?INFO("of_driver drop big packet: ~p~n",[ByteSize]),
                                         false;
