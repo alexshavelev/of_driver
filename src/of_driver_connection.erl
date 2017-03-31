@@ -317,7 +317,7 @@ do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
 
                                   #ofp_packet_in{data = Payload} = Body,
                                     ByteSize = byte_size(Payload),
-                                    case ByteSize > 1600 of
+                                    case ByteSize > 160 of
                                       true ->
                                         ?INFO("of_driver drop big packet: ~p~n",[ByteSize]),
                                         false;
