@@ -38,6 +38,7 @@
 -define(NOREPLY, noreply).
 
 -include_lib("of_protocol/include/of_protocol.hrl").
+-include_lib("of_protocol/include/ofp_v4.hrl").
 -include_lib("of_driver/include/of_driver_logger.hrl").
 
 % XXX can only handle one sync_send at a time.  Can organize
@@ -309,25 +310,24 @@ do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
         {ok, NewParser, MessagesPre} ->
           ?INFO("of_driver spawned before len ~p size ~p~n", [length(MessagesPre), byte_size(Data)]),
           Messages =
-            lists:filter(fun(#ofp_message{type = _MessageType, body = Body} = Message) ->
-%%                            case MessageType of
-%%                              packet_in ->
-%%                                spawn(?MODULE, handle_messages, [[Message], State]),
-%%                                ?INFO("of_driver spawned 2 ~n", []),
-%%                                false;
-%%
-%%                              _ ->
-%%                                true
-%%                            end
-                         
-                          case byte_size(Body) > 180 of
-                            true ->
-                              ?INFO("of_driver drop big packet: ~n",[]),
-                              false;
-                            false -> spawn(?MODULE, handle_messages, [[Message], State]),
-                              ?INFO("of_driver spawned 2 ~n", []),
-                              false
-                          end
+            lists:filter(fun(#ofp_message{type = MessageType, body = Body} = Message) ->
+                            case MessageType of
+                              packet_in ->
+
+                                  #ofp_packet_in{data = Payload} = Body,
+                                    case byte_size(Payload) > 180 of
+                                      true ->
+                                        ?INFO("of_driver drop big packet: ~n",[]),
+                                        false;
+                                      false -> spawn(?MODULE, handle_messages, [[Message], State]),
+                                        ?INFO("of_driver spawned 2 ~n", []),
+                                        false
+                                    end;
+                              _ ->
+                                true
+                            end
+
+
 
 
                          end, MessagesPre),
