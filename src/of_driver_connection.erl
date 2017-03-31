@@ -303,11 +303,11 @@ do_handle_tcp(#?STATE{parser        = undefined,
 do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
 
     case ofp_parser:parse(Parser, Data) of
-        {ok, NewParser, [#ofp_message{type = packet_in, body = #ofp_packet_in{data = Payload}}] = Messages} ->
-          spawn(?MODULE, handle_messages, [Messages, State]),
-          ByteSize = byte_size(Payload),
-          ?INFO("of_driver spawned 1 size: ~p~n", [ByteSize]),
-          {noreply, State#?STATE{last_receive = now(), parser = NewParser}};
+%%        {ok, NewParser, [#ofp_message{type = packet_in, body = #ofp_packet_in{data = Payload}}] = Messages} ->
+%%          spawn(?MODULE, handle_messages, [Messages, State]),
+%%          ByteSize = byte_size(Payload),
+%%          ?INFO("of_driver spawned 1 size: ~p~n", [ByteSize]),
+%%          {noreply, State#?STATE{last_receive = now(), parser = NewParser}};
         {ok, NewParser, MessagesPre} ->
           ?INFO("of_driver spawned before len ~p size ~p~n", [length(MessagesPre), byte_size(Data)]),
           Messages =
