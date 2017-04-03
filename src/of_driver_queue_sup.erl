@@ -21,7 +21,7 @@ start_link() ->
 
 init([]) ->
   C = of_driver_queue,
-  RestartStrategy = of_driver_queue,
+  RestartStrategy = simple_one_for_one,
   MaxRestarts = 1000,
   MaxSecondsBetweenRestarts = 3600,
   SupFlags = {RestartStrategy, MaxRestarts, MaxSecondsBetweenRestarts},
