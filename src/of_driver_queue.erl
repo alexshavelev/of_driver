@@ -65,7 +65,7 @@ start_link(DriverPid) ->
   {ok, State :: #state{}} | {ok, State :: #state{}, timeout() | hibernate} |
   {stop, Reason :: term()} | ignore).
 init([DriverPid]) ->
-  erlang:send_after(100, self(), process),
+  erlang:send_after(1, self(), process),
   {ok, #state{of_driver_connection = DriverPid, queue = queue:new()}}.
 
 %%--------------------------------------------------------------------
@@ -125,18 +125,19 @@ handle_info(done, #state{queue = Queue, of_driver_connection = OfDriverPid} = St
   end;
 
 handle_info(process, #state{queue = Queue, of_driver_connection = Driver, status = ready} = State) ->
-  erlang:send_after(10, self(), process),
   case queue:out(Queue) of
     {{value, Data}, QueueNew} ->
       spawn(?MODULE, process_msg, [self(), Driver, Data]),
       ?INFO("of_driver_queue send message to of_driver~n", []),
+      erlang:send_after(1, self(), process),
       {noreply, State#state{queue = QueueNew, status = busy}};
     {empty, QueueNew} ->
+      erlang:send_after(1, self(), process),
       {noreply, State#state{queue = QueueNew, status = ready}}
   end;
 
 handle_info(process, #state{status = busy} = State) ->
-  erlang:send_after(10, self(), process),
+  erlang:send_after(1, self(), process),
   {noreply, State};
 
 handle_info({tcp_closed,_Socket} = Msg, #state{of_driver_connection = Driver} = State) ->
