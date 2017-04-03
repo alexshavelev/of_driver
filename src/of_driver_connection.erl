@@ -141,10 +141,10 @@ handle_call(pending_msgs, _From, State) -> %% ***DEBUG
 
 handle_call({tcp, Socket, Data}, _From, #?STATE{ protocol = Protocol, socket = Socket} = State) ->
   of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
-  Response =
+  {_, Response} =
     do_handle_tcp(State, Data),
   ?INFO("getopts: ~p old state ~p new state ~p~n", [inet:getopts(Socket, [recbuf, buffer, nodelay]), State, Response]),
-  Response;
+  {reply, ok, Response};
 
 
 handle_call(state, _From, State) ->

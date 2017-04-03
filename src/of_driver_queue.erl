@@ -184,6 +184,6 @@ code_change(_OldVsn, State, _Extra) ->
 %%%===================================================================
 
 process_msg(CallbackPid, OfDriverPid, Data) ->
-%%  gen_server:call(OfDriverPid, Data),
-  OfDriverPid ! Data,
+  gen_server:call(OfDriverPid, Data),
+%%  OfDriverPid ! Data,
   CallbackPid ! done.
