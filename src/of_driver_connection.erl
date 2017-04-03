@@ -138,6 +138,15 @@ handle_call(next_xid, _From, #?STATE{ xid = XID } = State) ->
     {reply, {ok, XID}, NewState};
 handle_call(pending_msgs, _From, State) -> %% ***DEBUG
     {reply,{ok, State#?STATE.pending_msgs}, State};
+
+handle_call({tcp, Socket, Data}, _From, #?STATE{ protocol = Protocol, socket = Socket} = State) ->
+  of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
+  Response =
+    do_handle_tcp(State, Data),
+  ?INFO("getopts: ~p old state ~p new state ~p~n", [inet:getopts(Socket, [recbuf, buffer, nodelay]), State, Response]),
+  Response;
+
+
 handle_call(state, _From, State) ->
     {reply, {ok, State}, State}.
     
