@@ -48,9 +48,13 @@ init([]) ->
     
     L = of_driver_listener,
     LChild = {L, {L, start_link, []}, Restart, Shutdown, Type, [L]},
+
+    DQ = of_driver_queue_sup,
+    DQSup = {DQ, {DQ, start_link, []}, Restart, Shutdown, Type, [DQ]},
     
     {ok, {SupFlags, [ CSup,
                       CMSup,
-                      LChild
+                      LChild,
+                      DQSup
 		    ]}
     }.
