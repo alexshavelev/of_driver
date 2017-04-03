@@ -94,10 +94,10 @@ accept(ListenSocket) ->
         {ok, Socket} ->
             case of_driver_connection_sup:start_child(Socket) of
                 {ok, ConnCtrlPID} ->
-                    gen_tcp:controlling_process(Socket, ConnCtrlPID);
-%%
-%%                   {ok, DriverQueuePid} = of_driver_queue_sup:start_child(ConnCtrlPID),
-%%                    gen_tcp:controlling_process(Socket, DriverQueuePid);
+%%                    gen_tcp:controlling_process(Socket, ConnCtrlPID);
+
+                   {ok, DriverQueuePid} = of_driver_queue_sup:start_child(ConnCtrlPID),
+                    gen_tcp:controlling_process(Socket, DriverQueuePid);
 
                 {error,_Reason} ->
                     ok

@@ -115,14 +115,15 @@ handle_info({tcp, _Socket, Data} = Msg,#state{queue = Queue} = State) ->
   ?INFO("of_driver_queue new message from socket size: ~p~n", [byte_size(Data)]),
   {noreply, State#state{queue = queue:in(Msg, Queue)}};
 
-handle_info(done, #state{queue = Queue, of_driver_connection = OfDriverPid} = State) ->
-  case queue:out(Queue) of
-    {{value, Data}, QueueNew} ->
-      spawn(?MODULE, process_msg, [self(), OfDriverPid, Data]),
-      {noreply, State#state{queue = QueueNew, status = busy}};
-    {empty, QueueNew} ->
-      {noreply, State#state{queue = QueueNew, status = ready}}
-  end;
+handle_info(done, #state{queue = _Queue, of_driver_connection = _OfDriverPid} = State) ->
+%%  case queue:out(Queue) of
+%%    {{value, Data}, QueueNew} ->
+%%      spawn(?MODULE, process_msg, [self(), OfDriverPid, Data]),
+%%      {noreply, State#state{queue = QueueNew, status = busy}};
+%%    {empty, QueueNew} ->
+%%      {noreply, State#state{queue = QueueNew, status = ready}}
+%%  end;
+  {noreply, State#state{status = ready}};
 
 handle_info(process, #state{queue = Queue, of_driver_connection = Driver, status = ready} = State) ->
   case queue:out(Queue) of
