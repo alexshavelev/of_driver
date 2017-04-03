@@ -44,7 +44,7 @@
 %%--------------------------------------------------------------------
 
 start_link(DriverPid) ->
-  gen_server:start_link({local, ?SERVER}, ?MODULE, [DriverPid], []).
+  gen_server:start_link(?MODULE, [DriverPid], []).
 
 %%%===================================================================
 %%% gen_server callbacks
