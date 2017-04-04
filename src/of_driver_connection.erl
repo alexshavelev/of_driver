@@ -88,7 +88,7 @@ start_link(Socket) ->
 init([Socket]) ->
     Protocol = tcp,
 %%    of_driver_utils:setopts(Protocol, Socket, [{active, once}, {nodelay, true}, {buffer, 10000}, {send_timeout, 2000}]), %% , {buffer, 65536} , {send_timeout, 2000}, {send_timeout_close, true}
-    of_driver_utils:setopts(Protocol, Socket, [{active, once}, {nodelay, true}, {recbuf, 87040}, {sndbuf, 369280}, {send_timeout, 2000}]),
+    of_driver_utils:setopts(Protocol, Socket, [{active, once}, {nodelay, true}, {recbuf, 87040}, {sndbuf, 369280}, {buffer, 369280},{send_timeout, 2000}]),
     {ok, {Address, Port}} = inet:peername(Socket),
     SwitchHandler = of_driver_utils:conf_default(callback_module, fun erlang:is_atom/1, of_driver_default_handler),
     PingEnable = of_driver_utils:conf_default(enable_ping, fun erlang:is_atom/1, false),
