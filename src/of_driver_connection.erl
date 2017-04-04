@@ -169,6 +169,10 @@ handle_cast(close_connection, State) ->
 
 %%------------------------------------------------------------------
 
+handle_info({inet_reply, _Port, _} = Res, State) ->
+  ?INFO("of_driver inet_reply: ~p~n", [Res]),
+  {noreply, State};
+
 handle_info({'DOWN', MonitorRef, process, _MainPid, Reason},
                             State = #?STATE{main_monitor = MonitorRef}) ->
     close_of_connection(State, {main_closed, Reason});
