@@ -144,7 +144,7 @@ handle_call({tcp, Socket, Data}, _From, #?STATE{ protocol = Protocol, socket = S
   of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
   {_, Response} =
     do_handle_tcp(State, Data),
-  ?INFO("getopts: ~p old state ~p new state ~p~n", [inet:getopts(Socket, [recbuf, buffer, nodelay]), State, Response]),
+  ?INFO("getopts: ~p old state ~p new state ~p~n", [inet:getopts(Socket, [recbuf, buffer, nodelay, sndbuf]), State, Response]),
   {reply, ok, Response};
 
 
