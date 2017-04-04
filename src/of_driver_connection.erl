@@ -87,7 +87,7 @@ start_link(Socket) ->
 
 init([Socket]) ->
     Protocol = tcp,
-    of_driver_utils:setopts(Protocol, Socket, [{active, once}, {nodelay, true}, {buffer, 10000}]), %% , {buffer, 65536} , {send_timeout, 2000}, {send_timeout_close, true}
+    of_driver_utils:setopts(Protocol, Socket, [{active, once}, {nodelay, true}, {buffer, 10000}, {send_timeout, 2000}]), %% , {buffer, 65536} , {send_timeout, 2000}, {send_timeout_close, true}
     {ok, {Address, Port}} = inet:peername(Socket),
     SwitchHandler = of_driver_utils:conf_default(callback_module, fun erlang:is_atom/1, of_driver_default_handler),
     PingEnable = of_driver_utils:conf_default(enable_ping, fun erlang:is_atom/1, false),
@@ -127,7 +127,7 @@ handle_call({sync_send, OfpMsgs}, From, State =
     Barrier = of_msg_lib:barrier(Version),
     {NewXID, EncodedMessages} = encode_msgs(XID,
                                         lists:append(OfpMsgs, [Barrier])),
-    ?INFO("send getopts: ~p ~n", [inet:getopts(Socket, [recbuf, buffer, nodelay, send_timeout])]),
+    ?INFO("send getopts: ~p ~n", [inet:getopts(Socket, [recbuf, buffer, nodelay, send_timeout, send_timeout_close])]),
     XIDs = send_msgs(Protocol, Socket, EncodedMessages),
     NewPSM = pending_msgs(From, XIDs, PSM),
     {noreply, State#?STATE{xid = NewXID, pending_msgs = NewPSM}};
