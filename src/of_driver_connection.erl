@@ -127,6 +127,7 @@ handle_call({sync_send, OfpMsgs}, From, State =
     Barrier = of_msg_lib:barrier(Version),
     {NewXID, EncodedMessages} = encode_msgs(XID,
                                         lists:append(OfpMsgs, [Barrier])),
+    ?INFO("send getopts: ~p ~n", [inet:getopts(Socket, [recbuf, buffer, nodelay, send_timeout])]),
     XIDs = send_msgs(Protocol, Socket, EncodedMessages),
     NewPSM = pending_msgs(From, XIDs, PSM),
     {noreply, State#?STATE{xid = NewXID, pending_msgs = NewPSM}};
