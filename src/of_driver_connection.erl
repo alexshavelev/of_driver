@@ -515,7 +515,6 @@ handle_datapath(#?STATE{ datapath_mac = DatapathMac,
 switch_handler_next_state(Msg, #?STATE{ switch_handler = SwitchHandler,
                                         handler_state  = HandlerState } = State) ->
     {ok, NewHandlerState} = SwitchHandler:handle_message(Msg, HandlerState),
-	?INFO("SwitchHandler: ~p old handler state: ~p new handler state: ~p~n", [SwitchHandler, HandlerState, NewHandlerState]),
     State#?STATE{handler_state = NewHandlerState}.
 
 %%-----------------------------------------------------------------------------
