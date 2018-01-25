@@ -128,7 +128,7 @@ handle_call({sync_send, OfpMsgs}, From, State =
     Barrier = of_msg_lib:barrier(Version),
     {NewXID, EncodedMessages} = encode_msgs(XID,
                                         lists:append(OfpMsgs, [Barrier])),
-    ?INFO("send getopts: ~p ~n", [inet:getopts(Socket, [recbuf, buffer, nodelay, send_timeout, send_timeout_close])]),
+   
     XIDs = send_msgs(Protocol, Socket, EncodedMessages),
     NewPSM = pending_msgs(From, XIDs, PSM),
     {noreply, State#?STATE{xid = NewXID, pending_msgs = NewPSM}};
@@ -145,7 +145,6 @@ handle_call({tcp, Socket, Data}, _From, #?STATE{ protocol = Protocol, socket = S
   of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
   {_, Response} =
     do_handle_tcp(State, Data),
-  ?INFO("getopts: ~p old state ~p new state ~p~n", [inet:getopts(Socket, [recbuf, buffer, nodelay, sndbuf]), State, Response]),
   {reply, ok, Response};
 
 
@@ -183,7 +182,6 @@ handle_info({tcp, Socket, Data},#?STATE{ protocol = Protocol, socket = Socket } 
     of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
     Response =
     do_handle_tcp(State, Data),
-    ?INFO("getopts: ~p old state ~p new state ~p~n", [inet:getopts(Socket, [recbuf, buffer, nodelay]), State, Response]),
     Response;
 handle_info({tcp_closed,_Socket},State) ->
     close_of_connection(State,tcp_closed);
