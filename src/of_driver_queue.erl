@@ -112,7 +112,7 @@ handle_cast(_Request, State) ->
 %%--------------------------------------------------------------------
 
 handle_info({tcp, _Socket, Data} = Msg,#state{queue = Queue} = State) ->
-  ?INFO("of_driver_queue new message from socket size: ~p~n", [byte_size(Data)]),
+%   ?INFO("of_driver_queue new message from socket size: ~p~n", [byte_size(Data)]),
   {noreply, State#state{queue = queue:in(Msg, Queue)}};
 
 handle_info(done, #state{queue = _Queue, of_driver_connection = _OfDriverPid} = State) ->
@@ -129,7 +129,7 @@ handle_info(process, #state{queue = Queue, of_driver_connection = Driver, status
   case queue:out(Queue) of
     {{value, Data}, QueueNew} ->
       spawn(?MODULE, process_msg, [self(), Driver, Data]),
-      ?INFO("of_driver_queue send message to of_driver~n", []),
+%       ?INFO("of_driver_queue send message to of_driver~n", []),
       erlang:send_after(1, self(), process),
       {noreply, State#state{queue = QueueNew, status = busy}};
     {empty, QueueNew} ->
