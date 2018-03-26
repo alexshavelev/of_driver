@@ -368,7 +368,7 @@ do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
 handle_messages([], NewState) ->
     {ok, NewState};
 handle_messages([Message|Rest], NewState) ->
-    ?DEBUG("Receive from ~p: ~p~n", [NewState#?STATE.address, Message]),
+%     ?DEBUG("Receive from ~p: ~p~n", [NewState#?STATE.address, Message]),
     case handle_message(Message, NewState) of
         {stop, Reason, State} ->
             {stop, Reason, State};
