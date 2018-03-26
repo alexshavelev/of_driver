@@ -104,7 +104,7 @@ timestamp() ->
 
 send(tcp, Socket, Data) ->
     Start = timestamp(),
-    ok = gen_tcp:send(Socket, Data);
+    ok = gen_tcp:send(Socket, Data),
 %%    true = port_command(Socket, Data, [nosuspend]),
     End = timestamp(),
     ?INFO("TCP send ~p~n", [End - Start]);
