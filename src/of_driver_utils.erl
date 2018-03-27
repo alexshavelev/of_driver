@@ -103,11 +103,11 @@ timestamp() ->
   Mega * 1000000 * 1000000 + Sec * 1000000 + Micro.
 
 send(tcp, Socket, Data) ->
-    Start = timestamp(),
-    ok = gen_tcp:send(Socket, Data),
+%     Start = timestamp(),
+    gen_tcp:send(Socket, Data);
 %%    true = port_command(Socket, Data, [nosuspend]),
-    End = timestamp(),
-    ?INFO("TCP send ~p~n", [End - Start]);
+%     End = timestamp(),
+%     ?INFO("TCP send ~p~n", [End - Start]);
 send(tls, Socket, Data) ->
     ssl:send(Socket, Data).
 
