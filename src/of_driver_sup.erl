@@ -53,7 +53,7 @@ init([]) ->
     DQSup = {DQ, {DQ, start_link, []}, Restart, Shutdown, Type, [DQ]},
 
     UL = of_driver_unix,
-    ULChild = {UL, {v, start_link, []}, Restart, Shutdown, Type, [UL]},
+    ULChild = {UL, {UL, start_link, []}, Restart, Shutdown, Type, [UL]},
     
     {ok, {SupFlags, [ CSup,
                       CMSup,
