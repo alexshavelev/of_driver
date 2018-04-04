@@ -51,10 +51,14 @@ init([]) ->
 
     DQ = of_driver_queue_sup,
     DQSup = {DQ, {DQ, start_link, []}, Restart, Shutdown, Type, [DQ]},
+
+    UL = of_driver_unix,
+    ULChild = {UL, {v, start_link, []}, Restart, Shutdown, Type, [UL]},
     
     {ok, {SupFlags, [ CSup,
                       CMSup,
                       LChild,
-                      DQSup
+                      DQSup,
+                      ULChild
 		    ]}
     }.
