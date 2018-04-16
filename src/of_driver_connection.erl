@@ -512,6 +512,10 @@ handle_datapath(#?STATE{ datapath_mac = DatapathMac,
             close_of_connection(State, already_connected)
     end.
 
+switch_handler_next_state(Msg, {stop, normal, #?STATE{ switch_handler = SwitchHandler,
+  handler_state  = HandlerState } = State}) ->
+  skip;
+
 switch_handler_next_state(Msg, #?STATE{ switch_handler = SwitchHandler,
                                         handler_state  = HandlerState } = State) ->
     {ok, NewHandlerState} = SwitchHandler:handle_message(Msg, HandlerState),
