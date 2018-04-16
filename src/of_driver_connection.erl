@@ -143,9 +143,16 @@ handle_call(pending_msgs, _From, State) -> %% ***DEBUG
 
 handle_call({tcp, Socket, Data}, _From, #?STATE{ protocol = Protocol, socket = Socket} = State) ->
   of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
-  {_, Response} =
-    do_handle_tcp(State, Data),
-  {reply, ok, Response};
+  
+  
+  case do_handle_tcp(State, Data) of
+    {_, Response} -> {reply, ok, Response};
+    Other -> Other
+  end;
+  
+%%  {_, Response} =
+%%    do_handle_tcp(State, Data),
+%%  {reply, ok, Response};
 
 
 handle_call(state, _From, State) ->
