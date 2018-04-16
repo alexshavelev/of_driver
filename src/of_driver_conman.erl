@@ -77,8 +77,8 @@ handle_cast(connect, State = #?STATE{ipaddr = IpAddr, port = Port}) ->
             case of_driver_connection_sup:start_child(Socket) of
                 {ok, Connection} ->
                     {ok, DriverQueuePid} = of_driver_queue_sup:start_child(Connection),
-%%                    gen_tcp:controlling_process(Socket, Connection),
-                    gen_tcp:controlling_process(Socket, DriverQueuePid),
+                    gen_tcp:controlling_process(Socket, Connection),
+                    %%gen_tcp:controlling_process(Socket, DriverQueuePid),
                     MonitorRef = erlang:monitor(process, Connection),
                     State#?STATE{monitor_ref = MonitorRef};
                 {error, ChildReason} ->
