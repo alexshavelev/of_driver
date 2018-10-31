@@ -38,7 +38,7 @@
 -define(NOREPLY, noreply).
 
 -include_lib("of_protocol/include/of_protocol.hrl").
--include_lib("of_protocol/include/ofp_v4.hrl").
+-include_lib("of_protocol/include/ofp_v6.hrl").
 -include_lib("of_driver/include/of_driver_logger.hrl").
 
 % XXX can only handle one sync_send at a time.  Can organize
