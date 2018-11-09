@@ -300,6 +300,7 @@ do_handle_tcp(#?STATE{parser        = undefined,
                       hello_buffer  = Buffer,
                       protocol      = Protocol
                      } = State, Data) ->
+    ?INFO("message from ovs ~p~n", [Data]),
     case of_protocol:decode(<<Buffer/binary, Data/binary>>) of
         {ok, #ofp_message{xid = XID, body = #ofp_hello{}} = Hello, Leftovers} ->
             ?INFO("hello response ~p Versions ~p~n", [Hello, Versions]),
