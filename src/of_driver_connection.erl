@@ -34,6 +34,8 @@
          code_change/3
         ]).
 
+-compile([export_all]).
+
 -define(STATE, of_driver_connection_state).
 -define(NOREPLY, noreply).
 
@@ -300,6 +302,7 @@ do_handle_tcp(#?STATE{parser        = undefined,
                      } = State, Data) ->
     case of_protocol:decode(<<Buffer/binary, Data/binary>>) of
         {ok, #ofp_message{xid = XID, body = #ofp_hello{}} = Hello, Leftovers} ->
+            ?INFO("hello response ~p Versions ~p~n", [Hello, Versions]),
             case decide_on_version(Versions, Hello) of
                 {failed, Reason} ->
                     handle_failed_negotiation(XID, Reason, State);
