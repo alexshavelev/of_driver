@@ -38,7 +38,7 @@
 -define(NOREPLY, noreply).
 
 -include_lib("of_protocol/include/of_protocol.hrl").
--include_lib("of_protocol/include/ofp_v4.hrl").
+-include_lib("of_protocol/include/ofp_v6.hrl").
 -include_lib("of_driver/include/of_driver_logger.hrl").
 
 % XXX can only handle one sync_send at a time.  Can organize
@@ -143,9 +143,16 @@ handle_call(pending_msgs, _From, State) -> %% ***DEBUG
 
 handle_call({tcp, Socket, Data}, _From, #?STATE{ protocol = Protocol, socket = Socket} = State) ->
   of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
-  {_, Response} =
-    do_handle_tcp(State, Data),
-  {reply, ok, Response};
+  
+  
+  case do_handle_tcp(State, Data) of
+    {_, Response} -> {reply, ok, Response};
+    Other -> Other
+  end;
+  
+%%  {_, Response} =
+%%    do_handle_tcp(State, Data),
+%%  {reply, ok, Response};
 
 
 handle_call(state, _From, State) ->
@@ -511,6 +518,10 @@ handle_datapath(#?STATE{ datapath_mac = DatapathMac,
             % duplicate main connection
             close_of_connection(State, already_connected)
     end.
+
+switch_handler_next_state(Msg, {stop, normal, #?STATE{ switch_handler = SwitchHandler,
+  handler_state  = HandlerState } = State}) ->
+  skip;
 
 switch_handler_next_state(Msg, #?STATE{ switch_handler = SwitchHandler,
                                         handler_state  = HandlerState } = State) ->
