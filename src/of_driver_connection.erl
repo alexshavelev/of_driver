@@ -621,7 +621,9 @@ create_error(3, Type, Code) ->
 create_error(4, Type, Code) ->
     ofp_client_v4:create_error(Type, Code);
 create_error(5, Type, Code) ->
-    ofp_client_v5:create_error(Type, Code).
+    ofp_client_v5:create_error(Type, Code);
+create_error(6, Type, Code) ->
+    ofp_client_v6:create_error(Type, Code).
 
 terminate_connection(Socket) ->
     of_driver_utils:close(tcp, Socket).
