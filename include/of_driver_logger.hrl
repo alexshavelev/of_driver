@@ -41,3 +41,6 @@
         lager:error(Msg)).
 -define(ERROR(Msg, Args),
         lager:error(Msg, Args)).
+
+-define(FATAL(Msg, Args),
+        lager:log(fatal, [], Msg, Args)).

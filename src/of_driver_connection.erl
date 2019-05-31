@@ -201,11 +201,11 @@ handle_info({tcp_error, _Socket, _Reason},State) ->
 
 terminate(Reason, #?STATE{socket = undefined}) ->
     % terminating after connection is closed
-    ?ERROR("[~p] terminating: ~p~n", [?MODULE, Reason]),
+    ?FATAL("[~p] terminating: ~p~n", [?MODULE, Reason]),
     ok;
 terminate(Reason, State) ->
     % terminate and close connection
-    ?ERROR("[~p] terminating (crash): ~p~n", [?MODULE, Reason]),
+    ?FATAL("[~p] terminating (crash): ~p~n", [?MODULE, Reason]),
     close_of_connection(State, gen_server_terminate),
     ok.
 
