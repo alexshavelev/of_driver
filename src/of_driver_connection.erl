@@ -145,8 +145,6 @@ handle_call(pending_msgs, _From, State) -> %% ***DEBUG
 
 handle_call({tcp, Socket, Data}, _From, #?STATE{ protocol = Protocol, socket = Socket} = State) ->
   of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
-
-  ?INFO("line ~p data ~p state ~p~n", [?LINE, Data, State]),
   
   case do_handle_tcp(State, Data) of
     {_, Response} -> {reply, ok, Response};
@@ -192,7 +190,6 @@ handle_info({tcp, Socket, Data},#?STATE{ protocol = Protocol, socket = Socket } 
     of_driver_utils:setopts(Protocol,Socket,[{active, once}]),
     Response =
     do_handle_tcp(State, Data),
-  ?INFO("line ~p data ~p state ~p~n", [?LINE, Data, State]),
     Response;
 handle_info({tcp_closed,_Socket},State) ->
     close_of_connection(State,tcp_closed);
@@ -335,8 +332,6 @@ do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
           ?INFO("of_driver spawned 1 size: ~p~n", [ByteSize]),
           {noreply, State#?STATE{last_receive = now(), parser = NewParser}};
         {ok, NewParser, MessagesPre} ->
-          ?INFO("MessagesPre ~p~n", [MessagesPre]),
-%           ?INFO("of_driver spawned before len ~p size ~p~n", [length(MessagesPre), byte_size(Data)]),
           Messages =
             lists:filter(fun(#ofp_message{type = MessageType, body = Body} = Message) ->
                             case MessageType of

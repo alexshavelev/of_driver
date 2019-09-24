@@ -100,12 +100,7 @@ setopts(tls, Socket, Opts) ->
 
 
 send(tcp, Socket, Data) ->
-  ?INFO("of_driver send ~p~n", [Data]),
-%     Start = timestamp(),
     gen_tcp:send(Socket, Data);
-%%    true = port_command(Socket, Data, [nosuspend]),
-%     End = timestamp(),
-%     ?INFO("TCP send ~p~n", [End - Start]);
 send(tls, Socket, Data) ->
     ssl:send(Socket, Data).
 
