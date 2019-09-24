@@ -103,6 +103,7 @@ timestamp() ->
   Mega * 1000000 * 1000000 + Sec * 1000000 + Micro.
 
 send(tcp, Socket, Data) ->
+  ?INFO("send ~p~n", [Data]),
 %     Start = timestamp(),
     gen_tcp:send(Socket, Data);
 %%    true = port_command(Socket, Data, [nosuspend]),
