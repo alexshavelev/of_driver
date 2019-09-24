@@ -98,9 +98,6 @@ setopts(tcp, Socket, Opts) ->
 setopts(tls, Socket, Opts) ->
     ssl:setopts(Socket, Opts).
 
-timestamp() ->
-  {Mega, Sec, Micro} = erlang:timestamp(),
-  Mega * 1000000 * 1000000 + Sec * 1000000 + Micro.
 
 send(tcp, Socket, Data) ->
   ?INFO("send ~p~n", [Data]),
