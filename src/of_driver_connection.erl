@@ -333,6 +333,7 @@ do_handle_tcp(#?STATE{ parser = Parser, version = Version } = State, Data) ->
           ?INFO("of_driver spawned 1 size: ~p~n", [ByteSize]),
           {noreply, State#?STATE{last_receive = now(), parser = NewParser}};
         {ok, NewParser, MessagesPre} ->
+          ?INFO("MessagesPre ~p~n", [MessagesPre]),
 %           ?INFO("of_driver spawned before len ~p size ~p~n", [length(MessagesPre), byte_size(Data)]),
           Messages =
             lists:filter(fun(#ofp_message{type = MessageType, body = Body} = Message) ->
